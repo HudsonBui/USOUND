@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "632204393354",
+    "project_id": "usound-ed377",
+    "storage_bucket": "usound-ed377.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632204393354:android:7145b3eeabe9cf556a6673",
+        "android_client_info": {
+          "package_name": "com.example.sign_in"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsH_qughm6coO6a4IohUWIer-IX7wODcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632204393354:android:7b62edd03c9bad826a6673",
+        "android_client_info": {
+          "package_name": "com.example.usound"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsH_qughm6coO6a4IohUWIer-IX7wODcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
