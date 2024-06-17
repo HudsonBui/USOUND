@@ -5,8 +5,6 @@ import 'package:usound/firebase_options.dart';
 import 'package:usound/screens/intro_screens/loading_screen.dart';
 import 'package:usound/screens/login/sign_in_screen.dart';
 import 'package:usound/screens/main_screem/main_screen.dart';
-import 'package:usound/screens/main_screem/test_signin.dart';
-import 'package:usound/screens/splash_screen/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
