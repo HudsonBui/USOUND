@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:usound/assets/colors.dart';
 import 'package:usound/widgets/song_item/song_no_style.dart';
 

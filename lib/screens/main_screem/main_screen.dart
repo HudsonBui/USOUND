@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:usound/assets/colors.dart';
+import 'package:usound/providers/current_song_providers.dart';
 import 'package:usound/screens/main_screem/tab_screen/dashboard.dart';
 import 'package:usound/screens/main_screem/tab_screen/favourite/favourite.dart';
 import 'package:usound/screens/main_screem/tab_screen/library/library.dart';
 import 'package:usound/screens/main_screem/tab_screen/personal/pers_info.dart';
 import 'package:usound/screens/main_screem/tab_screen/search/search_screen.dart';
+import 'package:usound/widgets/song_item/song_card.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MainScreen extends StatefulWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends ConsumerState<MainScreen> {
+  var currentSong;
   var _selectedPageIndex = 0;
 
   void _selectedPage(int index) {
@@ -24,7 +28,19 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    currentSong = ref.watch(currentSongProvider);
     Widget _activedScreen = const Dashboard();
 
     if (_selectedPageIndex == 1) {
@@ -50,8 +66,8 @@ class _MainScreenState extends State<MainScreen> {
           child: _activedScreen,
         ),
       ),
-      // floatingActionButton: const SongTrackCard(),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: const SongTrackCard(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) {
           _selectedPage(index);

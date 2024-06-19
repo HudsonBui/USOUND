@@ -5,13 +5,19 @@ import 'package:usound/firebase_options.dart';
 import 'package:usound/screens/intro_screens/loading_screen.dart';
 import 'package:usound/screens/login/sign_in_screen.dart';
 import 'package:usound/screens/main_screem/main_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      //Use riverpod for the entire app
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

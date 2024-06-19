@@ -38,6 +38,12 @@ dependencies:
   transparent_image: ^2.0.1
   firebase_core: ^2.32.0
   firebase_auth: ^4.20.0
+  http: ^1.2.1
+  youtube_explode_dart: ^2.2.1
+  spotify: ^0.13.6+1
+  audio_video_progress_bar: ^2.0.3
+  just_audio: ^0.9.38
+  flutter_riverpod: ^2.5.1
 
 dev_dependencies:
   flutter_test:
