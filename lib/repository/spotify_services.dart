@@ -74,6 +74,60 @@ class SpotifyService {
     }
   }
 
+  Future<List<String>> getAvailableGenre() async {
+    final accessToken = await getAccessToken();
+    if (accessToken == null) {
+      return [];
+    }
+
+    final url = Uri.parse(
+        'https://api.spotify.com/v1/recommendations/available-genre-seeds');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      print(
+          body); // This will print the entire response body which includes tracks, artists, and albums
+      return List<String>.from(body['genres']);
+    } else {
+      // Handle error
+      print('Failed to load available genres');
+      return [];
+    }
+  }
+
+  Future<List<String>> getAvailableCategories() async {
+    final accessToken = await getAccessToken();
+    if (accessToken == null) {
+      return [];
+    }
+
+    final url = Uri.parse(
+        'https://api.spotify.com/v1/browse/categories?limit=50&offset=0');
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body);
+      print(
+          body); // This will print the entire response body which includes tracks, artists, and albums
+      return List<String>.from(body['categories']);
+    } else {
+      // Handle error
+      print('Failed to load available categories');
+      return [];
+    }
+  }
+
   //TRACK METHODS
   Future<Song> getTrackInfo(String trackId) async {
     final credentials = SpotifyApiCredentials(clientId, clientSecret);
@@ -98,9 +152,11 @@ class SpotifyService {
     );
   }
 
-  // Future<List<Song>> getSongsByCatergory(){
-    
-  // }
+  Pages<PlaylistSimple> getPlaylistFeatured() {
+    final credentials = SpotifyApiCredentials(clientId, clientSecret);
+    final spotify = SpotifyApi(credentials);
+    return spotify.playlists.featured;
+  }
 }
 
 class YoutubeService {

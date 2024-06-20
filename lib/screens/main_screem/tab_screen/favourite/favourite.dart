@@ -12,58 +12,61 @@ class FavouriteScreen extends StatefulWidget {
 class _FavouriteScreenState extends State<FavouriteScreen> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  hintStyle: const TextStyle(
-                    color: hintTextColor,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 100),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search',
+                    hintStyle: const TextStyle(
+                      color: hintTextColor,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      size: 20,
+                    ),
+                    contentPadding: const EdgeInsets.all(10),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    size: 20,
-                  ),
-                  contentPadding: const EdgeInsets.all(10),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  fillColor: Colors.white,
-                  filled: true,
                 ),
               ),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.sort,
-                color: Colors.white,
-                size: 30,
-              ),
-            )
-          ],
-        ),
-        const SizedBox(height: 20),
-        Expanded(
-          child: ListView(
-            children: const [
-              SongNoBackground(),
-              SongNoBackground(),
-              SongNoBackground(),
-              SongNoBackground(),
-              SongNoBackground(),
-              SongNoBackground(),
-              SongNoBackground(),
-              SongNoBackground(),
-              SongNoBackground(),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.sort,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              )
             ],
           ),
-        )
-      ],
+          const SizedBox(height: 20),
+          Expanded(
+            child: ListView(
+              children: const [
+                SongNoBackground(),
+                SongNoBackground(),
+                SongNoBackground(),
+                SongNoBackground(),
+                SongNoBackground(),
+                SongNoBackground(),
+                SongNoBackground(),
+                SongNoBackground(),
+                SongNoBackground(),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

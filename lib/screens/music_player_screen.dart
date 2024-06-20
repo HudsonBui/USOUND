@@ -194,10 +194,10 @@ class _MusicPlayerState extends ConsumerState<MusicPlayer> {
                         //     ),
                         //   ),
                         // ),
-                        StreamBuilder<Object>(
+                        StreamBuilder<Duration>(
                             stream: audioPlayer.positionStream,
                             builder: (context, snapshot) {
-                              position = snapshot.data as Duration;
+                              position = snapshot.data;
                               return ProgressBar(
                                 barHeight: 8,
                                 progress: (snapshot.data as Duration),

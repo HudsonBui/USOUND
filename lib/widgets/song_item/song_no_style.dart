@@ -36,6 +36,7 @@ class SongNoBackground extends ConsumerWidget {
             playlistId: ''); //Todo: get the playlistId
         ref.read(currentSongProvider.notifier).setCurrentSong(currentSongInfor);
         print('Time taken: ${timer.elapsed}');
+        spotifyService.getPlaylistFeatured();
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
