@@ -16,12 +16,26 @@ class SongNoBackground extends ConsumerWidget {
       onTap: () async {
         final track =
             await spotifyService.getTrackInfo('3Dv1eDb0MEgF93GpLXlucZ');
-        print(track.getSongName());
-        var songName = track.getSongName();
-        var songUrl = await spotifyService.getTrackURL(songName);
-        print(songUrl);
-        //var currentSongInfor = CurrentSong(songId: track.songId, duration: Duration(), position: position, songName: songName, songImage: track.getImageUrl(), artistName: track.getArtistName(), playlistId: '');
-        //var currentSong = ref.read(currentSongProvider.notifier).setCurrentSong(track);
+        var timer = Stopwatch()..start();
+        var trackId = track.getTrackId();
+        var trackName = track.getTrackName();
+        var trackImage = track.getImageUrl();
+        var artistsName = track.getArtistsName();
+        var ytService = YoutubeService();
+        var video = await ytService.setVideoResult(trackName);
+        var trackUrl = await video.getAudioUrl();
+        var trackDuration = video.getAudioDuration();
+        var currentSongInfor = CurrentSong(
+            trackId: trackId,
+            trackName: trackName,
+            trackImage: trackImage,
+            trackUrl: trackUrl,
+            duration: trackDuration,
+            position: const Duration(minutes: 0, seconds: 0),
+            artistsName: artistsName,
+            playlistId: ''); //Todo: get the playlistId
+        ref.read(currentSongProvider.notifier).setCurrentSong(currentSongInfor);
+        print('Time taken: ${timer.elapsed}');
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:spotify/spotify.dart';
-import 'package:usound/models/song.dart';
+import 'package:usound/models/song_model.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 class SpotifyService {
@@ -75,31 +75,6 @@ class SpotifyService {
   }
 
   //TRACK METHODS
-  // Future<String> getTrackName(String trackId) async {
-  //   final accessToken = await getAccessToken();
-  //   if (accessToken == null) {
-  //     return '';
-  //   }
-
-  //   final url = Uri.parse('https://api.spotify.com/v1/tracks/$trackId');
-  //   final response = await http.get(
-  //     url,
-  //     headers: {
-  //       'Authorization': 'Bearer $accessToken',
-  //     },
-  //   );
-
-  //   if (response.statusCode == 200) {
-  //     final body = json.decode(response.body);
-  //     // print(body);
-  //     // print(body['name']);
-  //     return body['name'];
-  //   } else {
-  //     // Handle error
-  //     print('Failed to get track');
-  //     return '';
-  //   }
-  // }
   Future<Song> getTrackInfo(String trackId) async {
     final credentials = SpotifyApiCredentials(clientId, clientSecret);
     final spotify = SpotifyApi(credentials);
@@ -110,23 +85,47 @@ class SpotifyService {
       artistsId.add(artist.id!);
       artistsName.add(artist.name!);
     });
+    var trackDuration = track.duration;
 
     return Song(
-      songId: track.id!,
-      songName: track.name!,
-      artistId: [track.artists!.first.id!],
-      artistName: artistsName,
+      trackId: track.id!,
+      trackName: track.name!,
+      artistsId: [track.artists!.first.id!],
+      artistsName: artistsName,
       albumId: track.album!.id!,
-      imageUrl: track.album!.images!.first.url!,
+      trackImage: track.album!.images!.first.url!,
+      duration: trackDuration!,
     );
   }
 
-  Future<String> getTrackURL(String trackName) async {
-    final yt = YoutubeExplode();
-    final searchResults = await yt.search('$trackName lyrics');
-    final videoId = searchResults.first.id.value;
+  // Future<List<Song>> getSongsByCatergory(){
+    
+  // }
+}
+
+class YoutubeService {
+  YoutubeService();
+
+  late final yt;
+  late final videoResult;
+
+  Future<YoutubeService> setVideoResult(String trackName) async {
+    yt = YoutubeExplode();
+    videoResult = (await yt.search('$trackName lyrics')).first;
+    return this;
+  }
+
+  Future<String> getAudioUrl() async {
+    final videoId = videoResult.id.value;
     final manifest = await yt.videos.streamsClient.getManifest(videoId);
     final audioUrl = manifest.audioOnly.first.url;
+
     return audioUrl.toString();
+  }
+
+  Duration getAudioDuration() {
+    final duration = videoResult.duration;
+
+    return duration;
   }
 }

@@ -1,27 +1,34 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 //import 'package:spotify/spotify.dart' as spotify;
 //import 'package:flutter/src/widgets/image.dart' as image;
 import 'package:usound/assets/colors.dart';
 import 'package:usound/assets/fonts.dart';
+import 'package:usound/models/current_song_model.dart';
+import 'package:usound/providers/current_song_providers.dart';
+import 'package:usound/repository/spotify_services.dart';
 
-class MusicPlayer extends StatefulWidget {
+class MusicPlayer extends ConsumerStatefulWidget {
   const MusicPlayer({super.key});
 
   @override
-  State<MusicPlayer> createState() => _MusicPlayerState();
+  ConsumerState<MusicPlayer> createState() => _MusicPlayerState();
 }
 
-class _MusicPlayerState extends State<MusicPlayer> {
+class _MusicPlayerState extends ConsumerState<MusicPlayer> {
   var playState = true; //true: playing, false: pause
   var repeatState = 1; //1: repeat off, 2: repeat one, 3: repeat all
   late Icon repeatIconState;
   var playIcon =
       const Icon(Icons.pause_circle, color: highContractColor, size: 60);
-  final audioUrl =
-      'https://rr7---sn-8pxuuxa-nbols.googlevideo.com/videoplayback?expire=1718840117&ei=1RZzZrL6D_2XvcAP3ve5iAU&ip=171.253.141.16&id=o-AJJDpDqByYs32LwKvfm98VWI3_YHspY5RfgHJCjxWcHQ&itag=139&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&mh=oO&mm=31%2C29&mn=sn-8pxuuxa-nbols%2Csn-8pxuuxa-nbo6s&ms=au%2Crdu&mv=m&mvi=7&pl=21&initcwndbps=428750&vprv=1&svpuc=1&mime=audio%2Fmp4&rqh=1&gir=yes&clen=1432155&dur=234.660&lmt=1706662374291263&mt=1718818152&fvip=1&keepalive=yes&c=ANDROID_TESTSUITE&txp=4532434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cvprv%2Csvpuc%2Cmime%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRAIgRrVAy8bO7YzmnPaJGuictAhXFVnG8gdFBoztj76xz8ACIFDL8liLOyf1PJ5if0fHHSOw18ZLFVrXvevL5_KpG4j0&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AHlkHjAwRgIhAOCfXpLJECpZluraMFH4wePf7kOZLnkvnv_9ibra9IyvAiEAnaIKePPtfrM7iSJ_owDaQY41sOvSikqzHEUnTXQ-Auk%3D';
+
   final audioPlayer = AudioPlayer();
+  var spotifyService = SpotifyService();
+
+  late CurrentSong currentSong;
+  var position;
 
   @override
   void initState() {
@@ -30,8 +37,23 @@ class _MusicPlayerState extends State<MusicPlayer> {
     // audioPlayer.setSource(UrlSource(audioUrl));
     // audioPlayer.play(UrlSource(audioUrl));
     // audioPlayer.resume(); //TODO: Improve the performance of loading the song
-    audioPlayer.setUrl(audioUrl);
+    currentSong = ref.read(currentSongProvider);
+    _initSong();
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
+  void _initSong() async {
+    var timer = Stopwatch()..start();
+    var trackUrl = currentSong.trackUrl;
+    print(trackUrl);
+    audioPlayer.setUrl(trackUrl.toString());
     audioPlayer.play();
+    print('Time taken: ${timer.elapsed}');
   }
 
   void _changeRepeatState() {
@@ -69,6 +91,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
         playIcon =
             const Icon(Icons.play_circle, color: highContractColor, size: 60);
         audioPlayer.pause();
+        ref.read(currentSongProvider.notifier).updatePosition(position);
       }
     });
   }
@@ -114,7 +137,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                           width: 350, // set the desired width
                           height: 400, // set the desired height
                           child: Image.network(
-                            'https://i.scdn.co/image/ab67616d00001e02f14aa81116510d3a6df8432b',
+                            currentSong.trackImage,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -132,11 +155,11 @@ class _MusicPlayerState extends State<MusicPlayer> {
                             Column(
                               children: [
                                 Text(
-                                  'Song name',
-                                  style: textNormalStyle,
+                                  currentSong.trackName,
+                                  style: textMediumStyle,
                                 ),
-                                const Text(
-                                  'Artist name',
+                                Text(
+                                  currentSong.artistsName,
                                   style: textSmallLightStyle,
                                 ),
                               ],
@@ -171,21 +194,27 @@ class _MusicPlayerState extends State<MusicPlayer> {
                         //     ),
                         //   ),
                         // ),
-                        ProgressBar(
-                          barHeight: 8,
-                          progress: const Duration(minutes: 1),
-                          //buffered: Duration(milliseconds: 120000),
-                          total: const Duration(minutes: 3, seconds: 30),
-                          //bufferedBarColor: Colors.white30,
-                          progressBarColor: highContractColor,
-                          thumbColor: highContractColor,
-                          baseBarColor: Colors.white24,
-                          timeLabelTextStyle:
-                              const TextStyle(color: Colors.white),
-                          onSeek: (duration) {
-                            print('User selected a new time: $duration');
-                          },
-                        ),
+                        StreamBuilder<Object>(
+                            stream: audioPlayer.positionStream,
+                            builder: (context, snapshot) {
+                              position = snapshot.data as Duration;
+                              return ProgressBar(
+                                barHeight: 8,
+                                progress: (snapshot.data as Duration),
+                                //buffered: Duration(milliseconds: 120000),
+                                total: currentSong.duration,
+                                //bufferedBarColor: Colors.white30,
+                                progressBarColor: highContractColor,
+                                thumbColor: highContractColor,
+                                baseBarColor:
+                                    const Color.fromARGB(60, 102, 92, 92),
+                                timeLabelTextStyle:
+                                    const TextStyle(color: Colors.white),
+                                onSeek: (duration) {
+                                  audioPlayer.seek(duration);
+                                },
+                              );
+                            }),
                       ],
                     ),
                   ), //1 part
